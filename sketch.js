@@ -15,61 +15,63 @@ let needSun;
 let pleaseSun; 
 let healthStats;
 
-let width = window.innerWidth;
-let height = window.innerHeight;
+let plantID; 
 
-
-function preload() {
-//  needWater = loadImage('pics/waterMe.png');
-//  pleaseWater = loadImage('pics/pleaseWater.png');
-//  needSun = loadImage('pics/needSun.png'); 
-//  pleaseSun = loadImage('pics/pleaseSun.png'); 
+function preload() { 
   healthStats = loadImage('pics/healthStats.png'); 
 }
 
 function setup() {
-    createCanvas(width, height);
-  
+let canvas = createCanvas(900, 1600);
+    canvas.parent('sketch');
+
+
     //Plant sprite 
-    plant = createSprite(width/2, (height - (height/3)) - 50);
+    plant = createSprite(450, 1100);
     plant.addAnimation('normal', 'pics/plant_happy1.png'); 
     plant.addAnimation('moveHappy', 'pics/plant_happy2.png', 'pics/plant_happy2.png', 'pics/plant_happy2.png', 'pics/plant_happy2.png', 'pics/plant_happy2.png', 'pics/plant_happy2.png', 'pics/plant_happy1.png', 'pics/plant_happy1.png', 'pics/plant_happy1.png', 'pics/plant_happy1.png', 'pics/plant_happy1.png');
     plant.addAnimation('sad', 'pics/plant_sad1.png', 'pics/plant_sad1.png', 'pics/plant_sad1.png', 'pics/plant_sad1.png', 'pics/plant_sad1.png', 'pics/plant_sad1.png', 'pics/plant_sad2.png',  'pics/plant_sad2.png',  'pics/plant_sad2.png',  'pics/plant_sad2.png',  'pics/plant_sad2.png',  'pics/plant_sad2.png'); 
     plant.mouseActive = true;
+    
+    plantID = createDiv();
+    plantID.id("plantID"); 
+    plantID.size(500, 500);
+    plantID.position(240, 858);
+    plantID.parent('sketch');
 
     //Water sprite 
-    water1 = createSprite((width/2 - 105), 325); 
+    water1 = createSprite(350, 325); 
     water1.addAnimation('normal','pics/water.png'); 
     water1.addAnimation('dry','pics/waterEmpty.png'); 
-    water2 = createSprite((width/2), 325); 
+    water2 = createSprite(450, 325); 
     water2.addAnimation('normal','pics/water.png'); 
     water2.addAnimation('dry','pics/waterEmpty.png'); 
-    water3 = createSprite((width/2 + 105), 325); 
+    water3 = createSprite(550, 325); 
     water3.addAnimation('normal','pics/water.png'); 
     water3.addAnimation('dry','pics/waterEmpty.png'); 
     
     //Sun sprite 
-    sun1 = createSprite((width/2 - 105), 475); 
+    sun1 = createSprite(350, 475); 
     sun1.addAnimation('normal','pics/sun.png'); 
     sun1.addAnimation('dry','pics/sunEmpty.png'); 
-    sun2 = createSprite((width/2), 475); 
+    sun2 = createSprite(450, 475); 
     sun2.addAnimation('normal','pics/sun.png'); 
     sun2.addAnimation('dry','pics/sunEmpty.png'); 
-    sun3 = createSprite((width/2 + 105), 475); 
+    sun3 = createSprite(550, 475); 
     sun3.addAnimation('normal','pics/sun.png'); 
     sun3.addAnimation('dry','pics/sunEmpty.png'); 
     
     //text sprites 
-     needWater = createSprite((width/2),  (height - (height/3)) + 250); 
+     needWater = createSprite(450,  1410); 
      needWater.addAnimation('normal','pics/waterMe.png'); 
      needWater.visible = false; 
-     pleaseWater = createSprite(200 + (width/2), (height - (height/3)) - 350)
+     pleaseWater = createSprite(650, 750)
      pleaseWater.addAnimation('normal','pics/pleaseWater.png'); 
      pleaseWater.visible = false; 
-     needSun = createSprite((width/2),  (height - (height/3)) + 350); 
+     needSun = createSprite(450,  1525); 
      needSun.addAnimation('normal','pics/needSun.png'); 
      needSun.visible = false; 
-     pleaseSun = createSprite((width/2) - 200, (height - (height/3)) - 350);
+     pleaseSun = createSprite(250, 750);
      pleaseSun.addAnimation('normal','pics/pleaseSun.png'); 
      pleaseSun.visible = false; 
   
@@ -79,16 +81,16 @@ function setup() {
 }
 
 function draw() {
-  background(220);
-    
-  image(healthStats, (width/2) - 300, 50);
-   
+  background(223, 232, 230);
+
+  image(healthStats, 150, 50);
   keyPressed(); 
   healthWater(); 
   healthSun();
-  sad();
+  message();
   drawSprites();
 }
+
 
 function healthWater() {
     if(countW >= 1 && countW < 2){ 
@@ -96,7 +98,7 @@ function healthWater() {
         water2.changeAnimation('normal');
         water3.changeAnimation('dry'); 
         if(countS >= 2){
-            sad();
+            message();
         }else{
             plant.changeAnimation('normal');
         } 
@@ -149,30 +151,60 @@ function healthSun() {
     }
 }  
 
-function sad(){
- if(countW >= 2 || countS >= 2){
-     plant.changeAnimation('sad');  
- }
-
- if(plant.mouseIsOver){
-     if(countW >= 2){
-        pleaseWater.visible = true;
-     }
+function message(){
+   if(countW >= 2 || countS >= 2){
+        plant.changeAnimation('sad');  
+    }
+    
+    //Mouse Interaction 
+    if(plant.mouseIsOver){
+        if(countW >= 2){
+            pleaseWater.visible = true;
+        }
      
-     if(countS >= 2){
-         pleaseSun.visible = true;
-     } 
- }else{
-     pleaseWater.visible = false;
-     pleaseSun.visible = false;
- }
+        if(countS >= 2){
+            pleaseSun.visible = true;
+        } 
+    }else{
+        pleaseWater.visible = false;
+        pleaseSun.visible = false;
+    }
+    
+    //Touch Screen Interaction 
+    if(countW >= 2 && countS >= 2){
+        showMess(true, true);
+        hideMess();
+    }else if(countW >=2 && countS < 2){
+        showMess(true, false); 
+        hideMess();
+    }else if(countW < 2 && countS >= 2){
+        showMess(false, true); 
+        hideMess();
+    }
+}
+
+function showMess(visW, visS){
+    document.getElementById("plantID").ontouchstart = function(){
+        pleaseWater.visible = visW; 
+        pleaseSun.visible = visS;
+    };
+}
+
+function hideMess(){
+    document.getElementById("plantID").ontouchend = function(){
+        pleaseWater.visible = false; 
+        pleaseSun.visible = false;
+    };
 }
 
 function happy(){
-  plant.onMouseOut = function() { this.changeAnimation('normal');}; 
-  plant.onMouseOver = function() { this.changeAnimation('moveHappy'); }; 
-  plant.onMouseReleased = function() { this.changeAnimation('normal');};
-  plant.onMousePressed = function() {this.changeAnimation('moveHappy'); }; 
+    //Mouse Interaction 
+    plant.onMouseOut = function() { this.changeAnimation('normal');}; 
+    plant.onMouseOver = function() { this.changeAnimation('moveHappy'); }; 
+    
+    //Touch Screen Interaction 
+    document.getElementById("plantID").ontouchstart = function(){plant.changeAnimation('moveHappy');};
+    document.getElementById("plantID").ontouchend = function(){plant.changeAnimation('normal');};
 } 
 
 function keyPressed() {
@@ -202,5 +234,4 @@ function keyPressed() {
         }
     }
 } 
-
 
